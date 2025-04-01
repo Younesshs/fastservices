@@ -63,3 +63,4 @@ server {
     server_name www.fastservices.pro fastservices.pro;
     return 404; # managed by Certbot
 }
+ 
