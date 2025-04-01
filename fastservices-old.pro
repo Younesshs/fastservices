@@ -8,33 +8,34 @@ server {
     access_log /var/log/nginx/fastservices.pro.access.log;
     error_log /var/log/nginx/fastservices.pro.error.log;
 
-    # Favicon
+	# Favicon
     location = /favicon.ico {
         log_not_found off;
         access_log off;
     }
 
-    # Robots
+	# Robots
     location = /robots.txt {
         allow all;
         log_not_found off;
         access_log off;
     }
 
-    # Wordpress
+	# Wordpress
     location / {
         try_files $uri $uri/ /index.php?$args;
     }
 
-    # PHP
+	# Php
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/run/php/php8.3-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
     }
 
-    # Assets
+    #PhpMyAdmin
+    
+    
+	# Assets
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
         expires max;
         log_not_found off;
@@ -52,45 +53,13 @@ server {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
+
     if ($host = fastservices.pro) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
+
     listen 80;
     server_name www.fastservices.pro fastservices.pro;
     return 404; # managed by Certbot
-}
-
-# 📌 Serveur pour PhpMyAdmin sur le port 8081
-server {
-    listen 8081;
-    server_name fastservices.pro;
-
-    root /usr/share/phpmyadmin;
-    index index.php;
-
-    location / {
-        try_files $uri $uri/ =404;
-    }
-
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-
-    location ~ /\.ht {
-        deny all;
-    }
-
-    # 🔐 (Optionnel) Protection par IP :
-    # allow 192.168.1.0/24;  # Remplacez par votre IP ou réseau
-    # deny all;
-
-    # 🔐 (Optionnel) Protection par mot de passe :
-    # location / {
-    #     auth_basic "Restricted Access";
-    #     auth_basic_user_file /etc/nginx/.htpasswd;
-    # }
 }
